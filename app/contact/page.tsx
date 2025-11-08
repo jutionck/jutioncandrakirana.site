@@ -1,10 +1,16 @@
+import type { Metadata } from 'next';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { Mail, Linkedin, Github, Phone, MapPin } from 'lucide-react';
 
+export const metadata: Metadata = {
+  title: 'Contact',
+  description: 'Get in touch for collaboration opportunities in development, training, or mentorship. Available for freelance projects and corporate training programs.',
+};
+
 export default function ContactPage() {
   return (
-    <main className='min-h-screen bg-background'>
+    <main id="main-content" className='min-h-screen bg-background'>
       <Header />
 
       {/* Hero Section */}

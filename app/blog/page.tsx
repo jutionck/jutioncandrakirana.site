@@ -1,8 +1,14 @@
+import type { Metadata } from 'next';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BookOpen, Clock } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Blog',
+  description: 'Technical articles about modern web development, microservices architecture, performance optimization, and cloud technologies. Sharing knowledge from real-world experience.',
+};
 
 const posts = [
   {
@@ -42,7 +48,7 @@ const posts = [
 
 export default function BlogPage() {
   return (
-    <main className='min-h-screen bg-background'>
+    <main id="main-content" className='min-h-screen bg-background'>
       <Header />
 
       {/* Hero Section */}

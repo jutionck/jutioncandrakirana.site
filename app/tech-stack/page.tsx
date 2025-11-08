@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import {
@@ -8,6 +9,11 @@ import {
   Wrench,
   Layers,
 } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Tech Stack',
+  description: 'Comprehensive expertise spanning backend development (Golang, Java Spring Boot, Node.js), modern frontends (React, Next.js), databases (PostgreSQL, MongoDB), and cloud technologies (Docker, Kubernetes).',
+};
 
 const categoryIcons: Record<string, any> = {
   'Backend & API': Code2,
@@ -143,7 +149,7 @@ const technologies = {
 
 export default function TechStackPage() {
   return (
-    <main className='min-h-screen bg-background'>
+    <main id="main-content" className='min-h-screen bg-background'>
       <Header />
 
       {/* Hero Section */}

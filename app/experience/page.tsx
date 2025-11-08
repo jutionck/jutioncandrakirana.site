@@ -1,6 +1,12 @@
+import type { Metadata } from 'next';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { Briefcase, GraduationCap, Calendar, MapPin } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Experience',
+  description: '7+ years journey spanning development, training, and entrepreneurship. CEO at Sobat Psikotes, Senior Trainer at Enigma Camp, Founder of MIPDEVP. Trained 500+ developers.',
+};
 
 const experienceByCompany = [
   {
@@ -205,7 +211,7 @@ const education = [
 
 export default function ExperiencePage() {
   return (
-    <main className='min-h-screen bg-background'>
+    <main id="main-content" className='min-h-screen bg-background'>
       <Header />
 
       {/* Hero Section */}

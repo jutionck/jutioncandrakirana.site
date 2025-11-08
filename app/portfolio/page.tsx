@@ -19,7 +19,7 @@ const projects = [
   {
     title: 'Sobat Psikotes',
     description:
-      'CEO-led online psychometric testing platform trusted by national companies. Built core features including real-time psychogram reports, multi-device testing. Scaled to serve hundreds of participants per session with modern UI/UX.',
+      'Production-ready online psychometric testing platform trusted by national companies like Pizza Hut Indonesia. Built core features including real-time psychogram reports, multi-device testing. Scaled to serve hundreds of participants per session with modern UI/UX.',
     category: 'Product & Platform',
     tags: [
       'Next.js',
@@ -27,6 +27,7 @@ const projects = [
       'Product Strategy',
       'Data Security',
       'Full-Stack',
+      'Production',
     ],
     link: 'https://sobatpsikotes.com',
     role: 'CEO & Lead Developer',
@@ -39,7 +40,54 @@ const projects = [
       'PostgreSQL',
     ],
     detailedDescription:
-      'Leading the development and product strategy of Sobat Psikotes, a comprehensive online psychometric testing platform. Built from ground up with modern tech stack to serve corporate clients including Pizza Hut Indonesia and other national companies. Implemented real-time psychogram report generation, multi-device testing capabilities, and scalable architecture to handle hundreds of concurrent participants.',
+      'Leading the development and product strategy of Sobat Psikotes, a comprehensive online psychometric testing platform currently in production. Built from ground up with modern tech stack to serve corporate clients including Pizza Hut Indonesia and other national companies. Implemented real-time psychogram report generation, multi-device testing capabilities, and scalable architecture to handle hundreds of concurrent participants. Platform features secure data handling, responsive design for cross-device compatibility, and automated reporting system.',
+    images: [],
+  },
+  {
+    title: 'Student Pathfinder',
+    description:
+      'AI-powered student career recommendation platform using OpenAI for intelligent career path suggestions based on student profiles, interests, and academic performance.',
+    category: 'AI & Machine Learning',
+    tags: ['Java Spring Boot', 'PostgreSQL', 'OpenAI', 'AI/ML', 'RESTful API'],
+    link: 'https://github.com/jutionck/be-student-pathfinder',
+    role: 'Backend Developer',
+    stack: [
+      'Java Spring Boot',
+      'PostgreSQL',
+      'OpenAI API',
+      'Gemini API',
+      'REST API',
+      'Maven',
+    ],
+    detailedDescription:
+      'Developed an AI-powered career recommendation system for students using Java Spring Boot and PostgreSQL. Integrated OpenAI and Google Gemini APIs to provide intelligent career path suggestions based on comprehensive student profiles including academic performance, interests, and skills. The system analyzes student data and generates personalized career recommendations with detailed explanations. Implemented secure API endpoints, database optimization for fast query performance, and robust error handling for AI API integrations.',
+    images: [],
+  },
+  {
+    title: 'AI CV Evaluator',
+    description:
+      'Intelligent CV evaluation system powered by AI. Parses PDF resumes, extracts key information, and provides detailed feedback using vector database (Chroma) for semantic search and matching.',
+    category: 'AI & Machine Learning',
+    tags: [
+      'Java Spring Boot',
+      'PDF Parsing',
+      'Vector DB',
+      'Chroma',
+      'AI/ML',
+      'NLP',
+    ],
+    link: 'https://github.com/jutionck/ai-cv-evaluator',
+    role: 'Backend Developer',
+    stack: [
+      'Java Spring Boot',
+      'Apache PDFBox',
+      'Chroma Vector DB',
+      'OpenAI Embeddings',
+      'PostgreSQL',
+      'REST API',
+    ],
+    detailedDescription:
+      'Built an advanced AI-powered CV evaluation system using Java Spring Boot. The system parses PDF resumes using Apache PDFBox, extracts structured information, and stores embeddings in Chroma vector database for semantic search. Leverages AI to provide comprehensive feedback on CV quality, skill matching, and improvement suggestions. Implemented document processing pipeline, vector similarity search for job matching, and detailed analytics on candidate profiles. Features include automated skill extraction, experience validation, and AI-generated recommendations for CV improvement.',
     images: [],
   },
   {
@@ -157,7 +205,7 @@ export default function PortfolioPage() {
   };
 
   return (
-    <main className='min-h-screen bg-background'>
+    <main id='main-content' className='min-h-screen bg-background'>
       <Header />
 
       {/* Hero Section */}
