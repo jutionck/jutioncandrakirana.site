@@ -88,7 +88,7 @@ export default function Hero() {
           style={{ animationDelay: '0.6s' }}
         >
           <a
-            href='https://github.com/jutioncandrakirana'
+            href='https://github.com/jutionck'
             target='_blank'
             rel='noopener noreferrer'
             className='p-3 glass rounded-lg hover:border-accent hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-1 transition-all duration-300 group'
@@ -96,7 +96,7 @@ export default function Hero() {
             <Github className='w-5 h-5 text-muted-foreground group-hover:text-accent transition-colors' />
           </a>
           <a
-            href='https://linkedin.com/in/jutioncandrakirana'
+            href='https://linkedin.com/in/jutionck'
             target='_blank'
             rel='noopener noreferrer'
             className='p-3 glass rounded-lg hover:border-accent hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-1 transition-all duration-300 group'
