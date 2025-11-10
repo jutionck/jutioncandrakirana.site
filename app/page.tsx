@@ -8,9 +8,11 @@ import ExperienceHighlights from '@/components/experience-highlights';
 import CTASection from '@/components/cta-section';
 
 export const metadata: Metadata = {
-  title: 'Jution Candra Kirana - Tech Edu & Fullstack Developer',
   description:
-    'Full-stack developer and tech educator with 7+ years of experience. Specializing in Golang, Java Spring Boot, React, and cloud technologies. Training 500+ developers.',
+    'Jution Candra Kirana - Full-stack developer and tech educator from Indonesia with 7+ years of experience. Specializing in Golang, Java Spring Boot, React, and cloud technologies. Training 500+ developers.',
+  alternates: {
+    canonical: 'https://jutioncandrakirana.site',
+  },
 };
 
 export default function Home() {

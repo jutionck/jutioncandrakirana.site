@@ -16,6 +16,11 @@ const nextConfig = {
   },
   compress: true,
   poweredByHeader: false,
+  experimental: {
+    turbo: {
+      root: process.cwd(),
+    },
+  },
 }
 
 export default nextConfig

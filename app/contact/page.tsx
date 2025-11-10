@@ -1,16 +1,19 @@
 import type { Metadata } from 'next';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { Mail, Linkedin, Github, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Github, Linkedin } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Contact',
-  description: 'Get in touch for collaboration opportunities in development, training, or mentorship. Available for freelance projects and corporate training programs.',
+  description:
+    'Contact Jution Candra Kirana - Get in touch for collaboration opportunities in development, AI/ML projects, training, or mentorship. Available for freelance projects and corporate training programs.',
+  alternates: {
+    canonical: 'https://jutioncandrakirana.site/contact',
+  },
 };
 
 export default function ContactPage() {
   return (
-    <main id="main-content" className='min-h-screen bg-background'>
+    <main id='main-content' className='min-h-screen bg-background'>
       <Header />
 
       {/* Hero Section */}

@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -20,13 +20,18 @@ export function ThemeToggle() {
     );
   }
 
+  const currentTheme = theme === 'system' ? resolvedTheme : theme;
+
   return (
     <button
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      onClick={() => {
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+      }}
       className='p-2 rounded-lg glass hover:border-accent/50 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300 group'
-      aria-label='Toggle theme'
+      aria-label={`Switch to ${currentTheme === 'dark' ? 'light' : 'dark'} mode`}
     >
-      {theme === 'dark' ? (
+      {currentTheme === 'dark' ? (
         <Sun className='w-5 h-5 text-accent group-hover:rotate-180 transition-transform duration-500' />
       ) : (
         <Moon className='w-5 h-5 text-accent group-hover:-rotate-12 transition-transform duration-300' />

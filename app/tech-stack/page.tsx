@@ -11,8 +11,10 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Tech Stack',
-  description: 'Comprehensive expertise spanning backend development (Golang, Java Spring Boot, Node.js), modern frontends (React, Next.js), databases (PostgreSQL, MongoDB), and cloud technologies (Docker, Kubernetes).',
+  description: 'Jution Candra Kirana - Comprehensive expertise spanning backend development (Golang, Java Spring Boot, Node.js), modern frontends (React, Next.js), databases (PostgreSQL, MongoDB), AI/ML, and cloud technologies (Docker, Kubernetes).',
+  alternates: {
+    canonical: 'https://jutioncandrakirana.site/tech-stack',
+  },
 };
 
 const categoryIcons: Record<string, any> = {

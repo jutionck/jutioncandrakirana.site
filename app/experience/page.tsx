@@ -4,8 +4,10 @@ import Footer from '@/components/footer';
 import { Briefcase, GraduationCap, Calendar, MapPin } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Experience',
-  description: '7+ years journey spanning development, training, and entrepreneurship. CEO at Sobat Psikotes, Senior Trainer at Enigma Camp, Founder of MIPDEVP. Trained 500+ developers.',
+  description: 'Jution Candra Kirana - 7+ years journey spanning development, training, and entrepreneurship. CEO at Sobat Psikotes, Senior Trainer at Enigma Camp, Founder of MIPDEVP. Trained 500+ developers.',
+  alternates: {
+    canonical: 'https://jutioncandrakirana.site/experience',
+  },
 };
 
 const experienceByCompany = [

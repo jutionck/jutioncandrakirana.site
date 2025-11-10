@@ -241,7 +241,7 @@ export default function BlogPostPage({
   }
 
   return (
-    <main id="main-content" className='min-h-screen bg-background'>
+    <main id='main-content' className='min-h-screen bg-background'>
       <Header />
 
       {/* Back to Blog Link */}
