@@ -1,0 +1,103 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'jck-microservices'
+
+# Alerting configuration (optional)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Blog Service (Golang)
+  - job_name: 'blog-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['blog-service:8001']
+        labels:
+          service: 'blog'
+          language: 'golang'
+
+  # Contact Service (Node.js)
+  - job_name: 'contact-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['contact-service:8002']
+        labels:
+          service: 'contact'
+          language: 'nodejs'
+
+  # Analytics Service (Golang)
+  - job_name: 'analytics-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['analytics-service:8003']
+        labels:
+          service: 'analytics'
+          language: 'golang'
+
+  # Auth Service (Spring Boot)
+  - job_name: 'auth-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['auth-service:8004']
+        labels:
+          service: 'auth'
+          language: 'java'
+
+  # Media Service (Node.js)
+  - job_name: 'media-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['media-service:8005']
+        labels:
+          service: 'media'
+          language: 'nodejs'
+
+  # Notification Service (Node.js)
+  - job_name: 'notification-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['notification-service:8006']
+        labels:
+          service: 'notification'
+          language: 'nodejs'
+
+  # PostgreSQL Exporter (optional - add if needed)
+  # - job_name: 'postgres'
+  #   static_configs:
+  #     - targets: ['postgres-exporter:9187']
+
+  # MongoDB Exporter (optional - add if needed)
+  # - job_name: 'mongodb'
+  #   static_configs:
+  #     - targets: ['mongodb-exporter:9216']
+
+  # Redis Exporter (optional - add if needed)
+  # - job_name: 'redis'
+  #   static_configs:
+  #     - targets: ['redis-exporter:9121']
+
+  # RabbitMQ
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15672']
+        labels:
+          service: 'rabbitmq'
+
+  # Nginx Exporter (if nginx-prometheus-exporter is added)
+  # - job_name: 'nginx'
+  #   static_configs:
+  #     - targets: ['nginx-exporter:9113']
+
+# Recording rules (optional - for aggregation)
+rule_files:
+  # - "rules/*.yml"

@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { ThemeProvider } from '@/components/theme-provider';
 import ScrollToTop from '@/components/scroll-to-top';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 
 const geist = Geist({
@@ -41,7 +42,9 @@ export const metadata: Metadata = {
     'Enigma Camp Trainer',
     'Sobat Psikotes CEO',
   ],
-  authors: [{ name: 'Jution Candra Kirana', url: 'https://jutioncandrakirana.site' }],
+  authors: [
+    { name: 'Jution Candra Kirana', url: 'https://jutioncandrakirana.site' },
+  ],
   creator: 'Jution Candra Kirana',
   publisher: 'Jution Candra Kirana',
   alternates: {
@@ -129,7 +132,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${geist.variable} ${geistMono.variable} font-sans antialiased`}>
+      <body
+        className={`${geist.variable} ${geistMono.variable} font-sans antialiased`}
+      >
         <SkipLink />
         <ThemeProvider
           attribute='class'
@@ -141,6 +146,7 @@ export default function RootLayout({
           <ScrollToTop />
         </ThemeProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
