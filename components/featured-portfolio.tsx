@@ -1,111 +1,192 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
+import { ArrowUpRight, FolderOpen } from 'lucide-react';
 
 const featuredProjects = [
   {
-    title: 'Sobat Psikotes',
+    id: 1,
+    title: 'Psychological Testing Platform',
+    role: 'Lead Developer & CEO',
+    category: 'Web App',
     description:
-      'CEO-led online psychometric testing platform trusted by national companies. Built core features including real-time psychogram reports, multi-device testing.',
-    tags: ['Next.js', 'React.js', 'Product Strategy'],
+      'A fully functional enterprise assessment platform for Sobat Psikotes. Built secure assessment workflows, automated scoring logic, and scalable deployment structures trusted by national companies.',
+    tags: ['Next.js', 'React.js', 'PostgreSQL', 'Product Strategy'],
     link: 'https://sobatpsikotes.com',
+    featured: true,
   },
   {
+    id: 2,
     title: 'LASIK JEC Landing Page',
+    role: 'Full Stack Developer',
+    category: 'Web App',
     description:
-      'Revamped eye hospital landing page from Figma designs into fully responsive Next.js application within 2 weeks.',
+      'Revamped eye hospital landing page from Figma designs into fully responsive Next.js application within 2 weeks with SEO optimization.',
     tags: ['Next.js', 'TailwindCSS', 'Responsive Design'],
-    link: '#',
+    link: 'https://lasik.jec.co.id',
+    featured: true,
   },
   {
-    title: 'Enigma Camp Training Programs',
+    id: 3,
+    title: 'Corporate IT Training Bootcamps',
+    role: 'Senior Trainer',
+    category: 'Training',
     description:
-      'Designed and delivered comprehensive IT bootcamps on Golang, Java Spring Boot, Node.js. Trained 500+ developers.',
-    tags: ['Golang', 'Java Spring Boot', 'Training'],
+      'Designed and delivered high-impact engineering bootcamps for major clients like Bank Danamon and Bank Mandiri. Trained 500+ developers in Golang, Java, and Cloud Native stacks.',
+    tags: ['Curriculum Dev', 'Mentorship', 'Java', 'Golang'],
     link: '#',
+    featured: true,
+  },
+  {
+    id: 4,
+    title: 'Simpel Aja TPID (Lampung Province)',
+    role: 'Full Stack Developer',
+    category: 'Web App',
+    description:
+      'Developed a province-wide reporting system used by all districts/cities in Lampung. Built monitoring dashboards for inflation indicators and program execution, improving coordination efficiency across TPID teams.',
+    tags: ['Full Stack', 'Dashboard', 'Reporting', 'Government'],
+    link: '#',
+    featured: true,
+  },
+  {
+    id: 5,
+    title: 'HRIS Platform (PT Panca Mitra Multiperdana)',
+    role: 'Software Developer',
+    category: 'Backend',
+    description:
+      'Delivered payroll, attendance, and employee management modules. Implemented NestJS and PostgreSQL backend services at enterprise scale, improving HR process efficiency through automation.',
+    tags: ['NestJS', 'PostgreSQL', 'HRIS', 'Backend'],
+    link: '#',
+    featured: true,
+  },
+  {
+    id: 6,
+    title: 'Fundtastic Microservices Platform',
+    role: 'Backend Developer',
+    category: 'Backend',
+    description:
+      'Delivered key microservices critical to platform reliability. Built service-to-service communication and secure API flows. Improved monitoring and logging through centralized microservice tooling.',
+    tags: ['Microservices', 'Backend', 'API', 'Security'],
+    link: '#',
+    featured: true,
+  },
+  {
+    id: 7,
+    title: 'BI Scholarship Information System',
+    role: 'Backend Developer',
+    category: 'Web App',
+    description:
+      'Developed BI Scholarship system for Lampung Region. Implemented document verification and real-time monitoring. Delivered dashboard used by BI administrators to manage recipients.',
+    tags: ['Full Stack', 'Dashboard', 'Scholarship System'],
+    link: '#',
+    featured: true,
+  },
+  {
+    id: 8,
+    title: 'Corporate Data Visualization',
+    role: 'Data Visualization Developer',
+    category: 'Data',
+    description:
+      'Designed and implemented interactive dashboards in Google Looker Studio tailored to client requirements. Processed and cleaned datasets to ensure data accuracy and clarity.',
+    tags: ['Google Looker Studio', 'Data Visualization', 'Analytics'],
+    link: '#',
+    featured: true,
   },
 ];
 
+const categories = ['All', 'Web App', 'Backend', 'Data', 'Training'];
+
 export default function FeaturedPortfolio() {
+  const [activeCategory, setActiveCategory] = useState('All');
+
+  const filteredProjects =
+    activeCategory === 'All'
+      ? featuredProjects
+      : featuredProjects.filter(
+          (project) => project.category === activeCategory
+        );
+
   return (
-    <section className='relative max-w-6xl mx-auto px-4 py-20 overflow-hidden'>
-      {/* Background decoration */}
-      <div className='absolute -left-20 top-40 w-96 h-96 bg-linear-to-br from-primary/20 to-transparent rounded-full blur-3xl -z-10' />
+    <section id='portfolio' className='py-32 bg-card/50 border-t border-border'>
+      <div className='max-w-7xl mx-auto px-6'>
+        <div className='flex flex-col items-center mb-16'>
+          <h2 className='text-3xl font-bold text-foreground font-mono uppercase tracking-tight mb-8'>
+            Portofolio
+          </h2>
 
-      <div className='space-y-4 mb-16 text-center'>
-        <div className='inline-block px-4 py-2 rounded-full glass border border-accent/20 mb-4'>
-          <span className='text-sm font-semibold text-accent'>
-            🚀 Portfolio
-          </span>
+          <div className='flex flex-wrap justify-center gap-2'>
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  activeCategory === category
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
+                    : 'bg-background border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
-        <h2 className='text-4xl lg:text-5xl font-bold'>
-          Featured{' '}
-          <span className='bg-linear-to-r from-primary to-accent bg-clip-text text-transparent'>
-            Work
-          </span>
-        </h2>
-        <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
-          Explore my recent projects showcasing full-stack development, product
-          leadership, and training excellence.
-        </p>
-      </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mb-12'>
-        {featuredProjects.map((project, index) => (
-          <a
-            key={project.title}
-            href={project.link}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='group relative glass rounded-2xl p-8 border border-border/50 hover:border-accent/50 hover:shadow-2xl hover:shadow-accent/10 hover:-translate-y-2 transition-all duration-500'
-            style={{ animationDelay: `${index * 0.15}s` }}
-          >
-            {/* Gradient overlay on hover */}
-            <div className='absolute inset-0 bg-linear-to-br from-primary/10 via-accent/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+          {filteredProjects.map((project, index) => (
+            <div
+              key={project.id}
+              className='group flex flex-col p-6 rounded-2xl border border-border bg-card/10 hover:bg-card/30 hover:border-primary/30 transition-all duration-300 h-full'
+            >
+              <div className='flex items-start justify-between mb-4'>
+                <div className='flex flex-col pr-4'>
+                  <span className='text-xs font-mono text-primary mb-2'>
+                    {project.category}
+                  </span>
+                  <h3 className='text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2'>
+                    {project.title}
+                  </h3>
+                </div>
+                {project.link && project.link !== '#' && (
+                  <a
+                    href={project.link}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='p-2 rounded-full bg-background border border-border text-muted-foreground group-hover:text-primary group-hover:border-primary transition-colors shrink-0'
+                  >
+                    <ArrowUpRight className='w-4 h-4' />
+                  </a>
+                )}
+              </div>
 
-            {/* Number badge */}
-            <div className='absolute -top-4 -right-4 w-12 h-12 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center font-bold text-primary-foreground shadow-lg'>
-              {index + 1}
-            </div>
+              <div className='mb-4'>
+                <span className='text-xs font-medium text-muted-foreground uppercase tracking-wider bg-muted/50 px-2 py-1 rounded'>
+                  {project.role}
+                </span>
+              </div>
 
-            <div className='relative'>
-              <h3 className='text-xl font-bold text-foreground mb-3 group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-primary group-hover:to-accent group-hover:bg-clip-text transition-all duration-300'>
-                {project.title}
-              </h3>
-              <p className='text-muted-foreground text-sm mb-6 leading-relaxed min-h-16'>
+              <p className='text-muted-foreground text-sm leading-relaxed mb-6 line-clamp-4 grow'>
                 {project.description}
               </p>
-              <div className='flex flex-wrap gap-2'>
-                {project.tags.map((tag) => (
+
+              <div className='flex flex-wrap gap-2 mt-auto pt-4 border-t border-border/50'>
+                {project.tags.slice(0, 3).map((tag) => (
                   <span
                     key={tag}
-                    className='text-xs px-3 py-1.5 bg-accent/10 text-accent rounded-full font-medium border border-accent/20'
+                    className='px-2 py-1 text-[10px] font-mono text-muted-foreground bg-background border border-border rounded-full'
                   >
                     {tag}
                   </span>
                 ))}
-              </div>
-
-              {/* Arrow indicator */}
-              <div className='mt-6 flex items-center gap-2 text-accent font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-                <span>View Project</span>
-                <span className='group-hover:translate-x-1 transition-transform duration-300'>
-                  →
-                </span>
+                {project.tags.length > 3 && (
+                  <span className='px-2 py-1 text-[10px] font-mono text-muted-foreground bg-background border border-border rounded-full'>
+                    +{project.tags.length - 3}
+                  </span>
+                )}
               </div>
             </div>
-          </a>
-        ))}
-      </div>
-
-      <div className='flex justify-center'>
-        <Link
-          href='/portfolio'
-          className='group px-8 py-4 glass text-foreground rounded-xl hover:border-accent hover:shadow-2xl hover:shadow-accent/20 hover:-translate-y-1 transition-all duration-300 font-semibold inline-flex items-center gap-2'
-        >
-          View All Projects
-          <span className='group-hover:translate-x-1 transition-transform duration-300'>
-            →
-          </span>
-        </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

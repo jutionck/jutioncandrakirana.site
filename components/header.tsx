@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from './theme-toggle';
@@ -9,60 +9,119 @@ import { Menu, X } from 'lucide-react';
 export default function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
 
-  const isActive = (path: string) => {
-    if (path === '/') {
-      return pathname === path;
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (pathname !== '/') return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: '-20% 0px -35% 0px' }
+    );
+
+    const sections = [
+      'home',
+      'tech-stack',
+      'portfolio',
+      'blog',
+      'experience',
+      'contact',
+    ];
+    sections.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  const isActive = (href: string) => {
+    if (pathname.startsWith('/blog')) {
+      return href === '/#blog';
     }
-    return pathname.startsWith(path);
+
+    if (pathname === '/') {
+      if (href === '/' && activeSection === 'home') return true;
+      return href.replace('/#', '') === activeSection;
+    }
+
+    return false;
   };
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/tech-stack', label: 'Tech Stack' },
-    { href: '/portfolio', label: 'Portfolio' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/experience', label: 'Experience' },
-    { href: '/contact', label: 'Contact' },
+    { href: '/#tech-stack', label: 'Stack' },
+    { href: '/#portfolio', label: 'Portfolio' },
+    { href: '/#experience', label: 'Experience' },
+    { href: '/#blog', label: 'Blog' },
+    { href: '/#contact', label: 'Contact' },
   ];
 
   return (
-    <header className='sticky top-0 z-50 border-b border-border/50 backdrop-blur-md bg-background/80'>
-      <nav className='max-w-6xl mx-auto px-4 py-4'>
-        <div className='flex items-center justify-between'>
-          <Link
-            href='/'
-            className='text-2xl font-bold bg-linear-to-r from-primary via-secondary to-accent bg-clip-text text-transparent hover:opacity-80 transition-opacity'
-          >
-            JCK
-          </Link>
+    <>
+      <nav className='fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none'>
+        <div
+          className={`
+            pointer-events-auto
+            relative flex items-center justify-between px-2 py-2 rounded-full transition-all duration-500 ease-out
+            ${
+              scrolled || isMenuOpen
+                ? 'bg-card/80 backdrop-blur-md border border-border shadow-2xl w-full max-w-4xl'
+                : 'bg-card/40 backdrop-blur-sm border border-border/50 w-full max-w-md md:max-w-3xl'
+            }
+          `}
+        >
+          {/* Logo */}
+          <div className='pl-4 shrink-0'>
+            <Link
+              href='/'
+              className='font-mono font-bold text-foreground tracking-tighter flex items-center gap-2'
+            >
+              <span className='w-2 h-2 rounded-full bg-primary animate-pulse'></span>
+              JCK<span className='text-muted-foreground'>.site</span>
+            </Link>
+          </div>
 
-          <div className='flex items-center gap-4'>
-            {/* Desktop Navigation */}
-            <ul className='hidden md:flex items-center gap-8 text-sm font-medium'>
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className={`transition-all duration-300 ease-out pb-2 border-b-2 ${
-                      isActive(link.href)
-                        ? 'text-accent border-accent'
-                        : 'text-muted-foreground hover:text-foreground border-transparent'
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {/* Desktop Menu */}
+          <div className='hidden md:flex items-center gap-1'>
+            {navLinks.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`px-4 py-2 text-xs font-medium rounded-full transition-all ${
+                  isActive(item.href)
+                    ? 'text-foreground bg-muted'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
 
+          {/* Right Side - Theme Toggle & Mobile Menu */}
+          <div className='flex items-center gap-2 pr-2'>
             <ThemeToggle />
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className='md:hidden p-2 rounded-lg glass hover:border-accent/50 transition-colors'
-              aria-label='Toggle menu'
+              className='p-2 text-muted-foreground hover:text-foreground transition-colors md:hidden'
             >
               {isMenuOpen ? (
                 <X className='w-5 h-5' />
@@ -72,30 +131,40 @@ export default function Header() {
             </button>
           </div>
         </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className='md:hidden mt-4 pb-4'>
-            <ul className='flex flex-col gap-4'>
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`block py-2 px-4 rounded-lg transition-all duration-300 ${
-                      isActive(link.href)
-                        ? 'bg-accent/10 text-accent font-semibold'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </nav>
-    </header>
+
+      {/* Mobile Menu Overlay */}
+      <div
+        className={`
+          fixed inset-0 z-40 bg-background/95 backdrop-blur-xl transition-all duration-300 md:hidden flex items-center justify-center
+          ${
+            isMenuOpen
+              ? 'opacity-100 pointer-events-auto'
+              : 'opacity-0 pointer-events-none'
+          }
+        `}
+      >
+        <div className='flex flex-col items-center space-y-6'>
+          {navLinks.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`text-xl font-medium transition-colors tracking-tight font-mono ${
+                isActive(item.href)
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <div className='pt-8 border-t border-border w-20'></div>
+          <div className='text-primary font-mono text-xs'>
+            initiate_contact()
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

@@ -1,112 +1,137 @@
 import Link from 'next/link';
+import {
+  Server,
+  Layout,
+  Database,
+  Cloud,
+  Users,
+  Cpu,
+  ArrowUpRight,
+} from 'lucide-react';
 
 const skillCategories = [
   {
-    category: 'Backend & API',
-    icon: '⚙️',
-    skills: ['Golang', 'Java Spring Boot', 'Node.js', 'PHP'],
-    color: 'from-blue-500 to-cyan-500',
+    id: 'backend',
+    title: 'Backend & API Architecture',
+    icon: Server,
+    skills: [
+      'Golang',
+      'Java Spring Boot',
+      'Node.js',
+      'PHP',
+      'REST API Design',
+      'OAuth/JWT',
+    ],
   },
   {
-    category: 'Frontend',
-    icon: '🎨',
-    skills: ['Next.js', 'React.js', 'TypeScript', 'TailwindCSS'],
-    color: 'from-purple-500 to-pink-500',
+    id: 'frontend',
+    title: 'Modern Frontend',
+    icon: Layout,
+    skills: ['Next.js', 'React.js', 'TypeScript', 'TailwindCSS', 'ES6+'],
   },
   {
-    category: 'Databases',
-    icon: '💾',
-    skills: ['PostgreSQL', 'MongoDB', 'MySQL', 'Redis'],
-    color: 'from-green-500 to-emerald-500',
+    id: 'database',
+    title: 'Data Systems',
+    icon: Database,
+    skills: ['PostgreSQL', 'MySQL', 'MongoDB', 'Redis'],
   },
   {
-    category: 'DevOps & Cloud',
-    icon: '☁️',
-    skills: ['Docker', 'Kubernetes', 'CI/CD', 'Git/GitHub'],
-    color: 'from-orange-500 to-red-500',
+    id: 'devops',
+    title: 'DevOps & Infrastructure',
+    icon: Cloud,
+    skills: [
+      'Docker',
+      'Kubernetes',
+      'CI/CD (Jenkins)',
+      'Git/GitHub',
+      'Agile/Scrum',
+    ],
   },
   {
-    category: 'Mobile & Testing',
-    icon: '📱',
-    skills: ['Flutter', 'Kotlin', 'Robot Framework', 'Appium'],
-    color: 'from-indigo-500 to-blue-500',
+    id: 'ml',
+    title: 'Data & ML',
+    icon: Cpu,
+    skills: [
+      'Data Analytics',
+      'Machine Learning',
+      'scikit-learn',
+      'TensorFlow',
+      'Python',
+    ],
   },
   {
-    category: 'Leadership',
-    icon: '🎯',
-    skills: ['Agile/Scrum', 'Training', 'Product Strategy', 'Team Management'],
-    color: 'from-yellow-500 to-amber-500',
+    id: 'leadership',
+    title: 'Technical Leadership',
+    icon: Users,
+    skills: [
+      'Curriculum Design',
+      'Corporate Training',
+      'Mentorship',
+      'Project Management',
+    ],
   },
 ];
 
 export default function SkillsOverview() {
   return (
-    <section className='relative max-w-6xl mx-auto px-4 py-20 overflow-hidden'>
-      {/* Background decoration */}
-      <div className='absolute top-20 right-0 w-72 h-72 bg-linear-to-br from-accent/20 to-transparent rounded-full blur-3xl -z-10' />
-
-      <div className='space-y-4 mb-16 text-center'>
-        <div className='inline-block px-4 py-2 rounded-full glass border border-primary/20 mb-4'>
-          <span className='text-sm font-semibold text-primary'>
-            💡 Tech Stack
-          </span>
-        </div>
-        <h2 className='text-4xl lg:text-5xl font-bold'>
-          Technical{' '}
-          <span className='bg-linear-to-r from-primary to-accent bg-clip-text text-transparent'>
-            Expertise
-          </span>
-        </h2>
-        <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
-          Comprehensive skill set spanning full-stack development, cloud
-          infrastructure, and technical leadership.
-        </p>
-      </div>
-
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
-        {skillCategories.map((item, index) => (
-          <div
-            key={item.category}
-            className='group relative glass rounded-2xl p-6 border border-border/50 hover:border-accent/50 hover:shadow-2xl hover:shadow-accent/10 hover:-translate-y-1 transition-all duration-500'
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
-            {/* Hover glow effect */}
-            <div className='absolute inset-0 bg-linear-to-br from-primary/5 to-accent/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
-
-            <div className='relative'>
-              <div className='flex items-center gap-3 mb-4'>
-                <div className='p-3 rounded-xl bg-linear-to-br from-primary/10 to-accent/10 group-hover:scale-110 transition-transform duration-300'>
-                  <span className='text-3xl'>{item.icon}</span>
-                </div>
-                <h3 className='font-bold text-lg group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-primary group-hover:to-accent group-hover:bg-clip-text transition-all duration-300'>
-                  {item.category}
-                </h3>
-              </div>
-              <div className='flex flex-wrap gap-2'>
-                {item.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className='text-xs px-3 py-1.5 bg-accent/10 text-accent rounded-full font-medium border border-accent/20 hover:bg-accent/20 hover:scale-105 transition-all duration-200 cursor-default'
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
+    <section id='tech-stack' className='py-32 relative'>
+      <div className='max-w-6xl mx-auto px-6'>
+        <div className='flex flex-col md:flex-row md:items-end justify-between mb-16 gap-4'>
+          <div>
+            <span className='text-primary font-mono text-sm tracking-wider uppercase mb-2 block'>
+              Technical Arsenal
+            </span>
+            <h2 className='text-3xl md:text-5xl font-bold text-foreground tracking-tight'>
+              Core Competencies
+            </h2>
           </div>
-        ))}
-      </div>
+          <p className='text-muted-foreground max-w-sm text-sm md:text-base'>
+            Comprehensive toolset for building scalable enterprise systems, from
+            bare-metal backend to distributed cloud architecture.
+          </p>
+        </div>
 
-      <div className='flex justify-center'>
-        <Link
-          href='/tech-stack'
-          className='group px-8 py-4 glass text-foreground rounded-xl hover:border-accent hover:shadow-2xl hover:shadow-accent/20 hover:-translate-y-1 transition-all duration-300 font-semibold inline-flex items-center gap-2'
-        >
-          Explore Full Tech Stack
-          <span className='group-hover:translate-x-1 transition-transform duration-300'>
-            →
-          </span>
-        </Link>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          {skillCategories.map((category, index) => {
+            const Icon = category.icon;
+            return (
+              <div
+                key={category.id}
+                className={`
+                  group p-8 rounded-2xl border border-border bg-card/20 hover:bg-card/40 transition-all duration-300 relative overflow-hidden
+                  ${
+                    index === 0 || index === 3 || index === 4
+                      ? 'md:col-span-2'
+                      : ''
+                  }
+                `}
+              >
+                <div className='absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity'>
+                  <ArrowUpRight className='w-5 h-5 text-muted-foreground' />
+                </div>
+
+                <div className='w-12 h-12 rounded-xl bg-muted/50 flex items-center justify-center text-foreground mb-6 group-hover:scale-110 transition-transform duration-300'>
+                  <Icon className='w-6 h-6' />
+                </div>
+
+                <h3 className='text-xl font-bold text-foreground mb-4'>
+                  {category.title}
+                </h3>
+
+                <div className='flex flex-wrap gap-2'>
+                  {category.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className='px-3 py-1.5 text-xs font-mono font-medium text-muted-foreground bg-background border border-border rounded-md group-hover:text-foreground group-hover:border-muted-foreground/50 transition-colors'
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
