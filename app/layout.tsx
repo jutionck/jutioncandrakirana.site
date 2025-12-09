@@ -138,7 +138,7 @@ export default function RootLayout({
         <SkipLink />
         <ThemeProvider
           attribute='class'
-          defaultTheme='system'
+          defaultTheme='light'
           enableSystem
           storageKey='jck-theme'
         >

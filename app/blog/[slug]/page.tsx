@@ -5,217 +5,13 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Clock, ArrowLeft, Calendar } from 'lucide-react';
+import { Clock, ArrowLeft, Calendar, Tag } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github-dark.css';
-
-const posts: Record<
-  string,
-  {
-    title: string;
-    date: string;
-    tags: string[];
-    content: string;
-    thumbnail: string;
-    readTime: string;
-    excerpt: string;
-  }
-> = {
-  'building-scalable-microservices': {
-    title: 'Building Scalable Microservices with Go',
-    date: '2025-01-15',
-    tags: ['Go', 'Architecture', 'Microservices'],
-    thumbnail:
-      'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=1200&auto=format&fit=crop&q=80',
-    readTime: '8 min read',
-    excerpt:
-      'Learn best practices for architecting microservices using Go and Kubernetes',
-    content: `
-# Building Scalable Microservices with Go
-
-Microservices architecture has become the go-to pattern for building scalable applications. In this post, we'll explore how to build microservices using Go.
-
-## Why Go for Microservices?
-
-Go is an excellent choice for microservices because of:
-
-- **Performance**: Go compiles to a single binary with minimal runtime overhead
-- **Concurrency**: Goroutines make it easy to handle thousands of concurrent requests
-- **Simplicity**: Clean syntax and standard library reduce external dependencies
-
-## Core Principles
-
-When building microservices with Go, follow these key principles:
-
-1. **Single Responsibility**: Each service should have a clear, single purpose
-2. **API-First Design**: Define clear APIs between services
-3. **Independent Deployment**: Each service should be deployable independently
-4. **Resilience**: Handle failures gracefully with timeouts and retries
-
-## Getting Started
-
-Here's a basic example of a simple microservice:
-
-\`\`\`go
-package main
-
-import (
-    "net/http"
-    "log"
-)
-
-func main() {
-    http.HandleFunc("/api/status", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        w.WriteHeader(http.StatusOK)
-        w.Write([]byte(\`{"status": "healthy"}\`))
-    })
-    
-    log.Fatal(http.ListenAndServe(":8080", nil))
-}
-\`\`\`
-
-## Deployment with Kubernetes
-
-Deploy your Go microservices using Kubernetes for automatic scaling and management.
-
-## Conclusion
-
-Go provides an excellent foundation for building modern microservices architectures. Its performance, simplicity, and built-in concurrency features make it ideal for this use case.
-    `,
-  },
-  'react-performance-optimization': {
-    title: 'React Performance Optimization Techniques',
-    date: '2025-01-10',
-    tags: ['React', 'Performance', 'JavaScript'],
-    thumbnail:
-      'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&auto=format&fit=crop&q=80',
-    readTime: '6 min read',
-    excerpt:
-      'Deep dive into memoization, code splitting, and bundle optimization',
-    content: `
-# React Performance Optimization Techniques
-
-Performance is critical for modern web applications. Let's explore key techniques to optimize your React applications.
-
-## Memoization
-
-Use React.memo to prevent unnecessary re-renders:
-
-\`\`\`jsx
-const MyComponent = React.memo(({ data }) => {
-    return <div>{data.name}</div>;
-});
-\`\`\`
-
-## Code Splitting
-
-Use dynamic imports to reduce bundle size:
-
-\`\`\`jsx
-const HeavyComponent = lazy(() => import('./HeavyComponent'));
-\`\`\`
-
-## Virtualization
-
-For long lists, use virtualization libraries to render only visible items.
-
-## Measuring Performance
-
-Use React DevTools Profiler to identify performance bottlenecks.
-
-## Best Practices
-
-- Profile before optimizing
-- Avoid inline objects in render
-- Use useMemo and useCallback wisely
-- Minimize bundle size
-
-## Conclusion
-
-Performance optimization is an ongoing process. Always measure, identify bottlenecks, and apply targeted optimizations.
-    `,
-  },
-  'kubernetes-deployment-guide': {
-    title: 'Kubernetes Deployment: A Practical Guide',
-    date: '2025-01-05',
-    tags: ['Kubernetes', 'DevOps', 'Docker'],
-    thumbnail:
-      'https://images.unsplash.com/photo-1667372393086-9d4001d51cf1?w=1200&auto=format&fit=crop&q=80',
-    readTime: '10 min read',
-    excerpt:
-      'Step-by-step guide to deploying containerized applications on Kubernetes',
-    content: `
-# Kubernetes Deployment: A Practical Guide
-
-Kubernetes is a powerful platform for container orchestration. Learn how to deploy applications effectively.
-
-## Prerequisites
-
-- Docker installed
-- Basic understanding of containers
-- kubectl installed
-
-## Creating a Deployment
-
-Define your deployment in a YAML file:
-
-\`\`\`yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-app
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: my-app
-  template:
-    metadata:
-      labels:
-        app: my-app
-    spec:
-      containers:
-      - name: my-app
-        image: my-app:latest
-        ports:
-        - containerPort: 8080
-\`\`\`
-
-## Deploying to Kubernetes
-
-Apply your deployment:
-
-\`\`\`bash
-kubectl apply -f deployment.yaml
-\`\`\`
-
-## Scaling
-
-Scale your deployment:
-
-\`\`\`bash
-kubectl scale deployment my-app --replicas=5
-\`\`\`
-
-## Monitoring
-
-Use kubectl commands to monitor your deployment:
-
-\`\`\`bash
-kubectl get pods
-kubectl logs deployment/my-app
-\`\`\`
-
-## Conclusion
-
-Kubernetes provides powerful capabilities for deploying and managing containerized applications. Start simple and gradually adopt more advanced features.
-    `,
-  },
-};
+import { posts } from '@/lib/data';
 
 export default function BlogPostPage({
   params,
@@ -223,17 +19,26 @@ export default function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
-  const post = posts[slug];
+  const post = posts.find((p) => p.slug === slug);
 
   if (!post) {
     return (
       <main className='min-h-screen bg-background'>
         <Header />
-        <section className='max-w-3xl mx-auto px-4 py-16'>
-          <h1 className='text-4xl font-bold text-foreground'>Post Not Found</h1>
-          <p className='text-muted-foreground mt-4'>
+        <section className='max-w-3xl mx-auto px-4 py-32 text-center'>
+          <h1 className='text-4xl font-bold text-foreground mb-4'>
+            Post Not Found
+          </h1>
+          <p className='text-muted-foreground mb-8'>
             The blog post you&apos;re looking for doesn&apos;t exist.
           </p>
+          <Link
+            href='/blog'
+            className='inline-flex items-center gap-2 text-primary hover:underline'
+          >
+            <ArrowLeft className='w-4 h-4' />
+            Back to Blog
+          </Link>
         </section>
         <Footer />
       </main>
@@ -244,23 +49,25 @@ export default function BlogPostPage({
     <main id='main-content' className='min-h-screen bg-background'>
       <Header />
 
-      {/* Back to Blog Link */}
-      <div className='max-w-4xl mx-auto px-4 pt-8'>
-        <Link
-          href='/blog'
-          className='inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors duration-300 text-sm font-medium'
-        >
-          <ArrowLeft className='w-4 h-4' />
-          <span>Back to Blog</span>
-        </Link>
-      </div>
+      {/* Hero Section */}
+      <section className='relative pt-32 pb-16 overflow-hidden'>
+        {/* Background elements */}
+        <div className='absolute top-0 right-0 w-96 h-96 bg-linear-to-bl from-primary/10 to-transparent rounded-full blur-3xl -z-10' />
+        <div className='absolute bottom-0 left-0 w-96 h-96 bg-linear-to-tr from-accent/10 to-transparent rounded-full blur-3xl -z-10' />
 
-      <article className='max-w-4xl mx-auto px-4 py-8 pb-16'>
-        {/* Article Header */}
-        <header className='mb-8'>
+        <div className='max-w-4xl mx-auto px-6'>
+          {/* Back Link */}
+          <Link
+            href='/blog'
+            className='inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors duration-300 text-sm font-medium mb-8 group'
+          >
+            <ArrowLeft className='w-4 h-4 group-hover:-translate-x-1 transition-transform' />
+            <span>Back to Blog</span>
+          </Link>
+
           {/* Meta Info */}
-          <div className='flex items-center gap-3 text-sm text-muted-foreground mb-6'>
-            <div className='flex items-center gap-1'>
+          <div className='flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6'>
+            <div className='flex items-center gap-1.5 bg-muted/50 px-3 py-1 rounded-full'>
               <Calendar className='w-4 h-4' />
               <time>
                 {new Date(post.date).toLocaleDateString('en-US', {
@@ -270,107 +77,126 @@ export default function BlogPostPage({
                 })}
               </time>
             </div>
-            <span>•</span>
-            <div className='flex items-center gap-1'>
+            <div className='flex items-center gap-1.5 bg-muted/50 px-3 py-1 rounded-full'>
               <Clock className='w-4 h-4' />
               <span>{post.readTime}</span>
             </div>
           </div>
 
           {/* Title */}
-          <h1 className='text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight'>
+          <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-8 leading-tight tracking-tight'>
             {post.title}
           </h1>
 
-          {/* Excerpt */}
-          <p className='text-xl text-muted-foreground leading-relaxed mb-6'>
-            {post.excerpt}
-          </p>
-
           {/* Tags */}
-          <div className='flex flex-wrap gap-2 mb-8'>
+          <div className='flex flex-wrap gap-2 mb-12'>
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className='text-xs px-3 py-1.5 bg-muted text-muted-foreground rounded-full font-medium'
+                className='inline-flex items-center gap-1 text-xs px-3 py-1.5 bg-primary/10 text-primary rounded-full font-medium border border-primary/20'
               >
+                <Tag className='w-3 h-3' />
                 {tag}
               </span>
             ))}
           </div>
 
           {/* Thumbnail */}
-          <div className='relative aspect-video w-full overflow-hidden rounded-xl bg-muted mb-8'>
+          <div className='relative aspect-video w-full overflow-hidden rounded-2xl border border-border/50 shadow-2xl shadow-primary/5 mb-16 group'>
             <Image
               src={post.thumbnail}
               alt={post.title}
               fill
-              className='object-cover'
+              className='object-cover transition-transform duration-700 group-hover:scale-105'
               sizes='(max-width: 896px) 100vw, 896px'
               priority
             />
+            <div className='absolute inset-0 bg-linear-to-t from-background/20 to-transparent' />
           </div>
-        </header>
+        </div>
+      </section>
 
-        {/* Article Content */}
-        <div className='prose prose-lg max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-p:text-lg prose-p:leading-relaxed prose-li:text-muted-foreground prose-strong:text-foreground prose-code:text-accent prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-pre:bg-[#0d1117] prose-pre:border prose-pre:border-border/50 prose-a:text-primary prose-a:no-underline hover:prose-a:underline'>
+      {/* Content Section */}
+      <article className='max-w-3xl mx-auto px-6 pb-24'>
+        <div className='prose prose-lg max-w-none dark:prose-invert prose-headings:text-foreground prose-headings:font-bold prose-headings:tracking-tight prose-p:text-muted-foreground prose-p:leading-relaxed prose-li:text-muted-foreground prose-strong:text-foreground prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-pre:bg-card prose-pre:border prose-pre:border-border prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-primary prose-blockquote:bg-muted/30 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-img:rounded-xl prose-img:shadow-lg'>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeHighlight, rehypeRaw]}
             components={{
               h1: ({ children }) => (
-                <h1 className='text-3xl font-bold mt-10 mb-4 first:mt-0'>
+                <h1 className='text-3xl font-bold mt-12 mb-6 first:mt-0'>
                   {children}
                 </h1>
               ),
               h2: ({ children }) => (
-                <h2 className='text-2xl font-bold mt-8 mb-4'>{children}</h2>
+                <h2 className='text-2xl font-bold mt-10 mb-5 pb-2 border-b border-border/50'>
+                  {children}
+                </h2>
               ),
               h3: ({ children }) => (
-                <h3 className='text-xl font-bold mt-6 mb-3'>{children}</h3>
+                <h3 className='text-xl font-bold mt-8 mb-4'>{children}</h3>
               ),
               p: ({ children }) => <p className='mb-6'>{children}</p>,
               ul: ({ children }) => (
-                <ul className='mb-6 ml-6 list-disc space-y-2'>{children}</ul>
+                <ul className='mb-6 ml-6 list-disc space-y-2 marker:text-primary'>
+                  {children}
+                </ul>
               ),
               ol: ({ children }) => (
-                <ol className='mb-6 ml-6 list-decimal space-y-2'>{children}</ol>
+                <ol className='mb-6 ml-6 list-decimal space-y-2 marker:text-primary'>
+                  {children}
+                </ol>
               ),
               li: ({ children }) => (
-                <li className='leading-relaxed'>{children}</li>
+                <li className='leading-relaxed pl-1'>{children}</li>
               ),
               code: ({ className, children, ...props }: any) => {
                 const match = /language-(\w+)/.exec(className || '');
                 return match ? (
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
+                  <div className='relative group'>
+                    <div className='absolute -top-3 right-4 text-xs font-mono text-muted-foreground bg-card border border-border px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity'>
+                      {match[1]}
+                    </div>
+                    <code className={className} {...props}>
+                      {children}
+                    </code>
+                  </div>
                 ) : (
-                  <code className='text-sm' {...props}>
+                  <code className='text-sm font-mono' {...props}>
                     {children}
                   </code>
                 );
               },
               pre: ({ children }) => (
-                <pre className='rounded-xl overflow-x-auto p-4 my-6'>
+                <pre className='rounded-xl overflow-x-auto p-6 my-8 bg-[#0d1117] border border-border/50 shadow-lg'>
                   {children}
                 </pre>
               ),
+              blockquote: ({ children }) => (
+                <blockquote className='border-l-4 border-primary pl-6 italic my-8 text-lg text-muted-foreground bg-muted/20 py-4 pr-4 rounded-r-lg'>
+                  {children}
+                </blockquote>
+              ),
             }}
           >
-            {post.content}
+            {post.content || ''}
           </ReactMarkdown>
         </div>
 
         {/* Divider */}
-        <div className='border-t border-border/50 mt-16 pt-8'>
-          <Link
-            href='/blog'
-            className='inline-flex items-center gap-2 text-primary hover:gap-3 transition-all duration-300 font-semibold'
-          >
-            <ArrowLeft className='w-5 h-5' />
-            <span>Back to all articles</span>
-          </Link>
+        <div className='border-t border-border mt-16 pt-12'>
+          <div className='flex flex-col md:flex-row items-center justify-between gap-6'>
+            <h3 className='text-xl font-bold text-foreground'>
+              Enjoyed this article?
+            </h3>
+            <Link
+              href='/blog'
+              className='inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25'
+            >
+              <ArrowLeft className='w-4 h-4' />
+              <span>Read more articles</span>
+            </Link>
+          </div>
         </div>
       </article>
 
