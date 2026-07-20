@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/private/'],
+        disallow: ['/api/', '/private/', '/studio/'],
       },
     ],
     sitemap: 'https://jutioncandrakirana.site/sitemap.xml',

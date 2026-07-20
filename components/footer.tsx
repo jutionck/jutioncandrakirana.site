@@ -1,9 +1,18 @@
-export default function Footer() {
+import { client } from '@/sanity/lib/client';
+import { siteSettingsQuery } from '@/sanity/lib/queries';
+
+export default async function Footer() {
+  const siteSettings = await client.fetch<{ siteName?: string } | null>(
+    siteSettingsQuery,
+    {},
+    { next: { tags: ['siteSettings'], revalidate: 3600 } }
+  );
+
   return (
     <footer className='bg-background py-8 border-t border-border'>
       <div className='max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4'>
         <div className='text-muted-foreground text-xs font-mono'>
-          JCK.site © {new Date().getFullYear()}
+          {siteSettings?.siteName || 'JCK.site'} © {new Date().getFullYear()}
         </div>
       </div>
     </footer>

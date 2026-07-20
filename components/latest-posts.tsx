@@ -1,10 +1,28 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, ArrowRight } from 'lucide-react';
-import { posts } from '@/lib/data';
 
-export default function LatestPosts() {
-  const latestPosts = posts.slice(0, 3);
+import { client } from '@/sanity/lib/client';
+import { urlFor } from '@/sanity/lib/image';
+import { latestPostsQuery } from '@/sanity/lib/queries';
+import type { Image as SanityImage } from 'sanity';
+
+type PostSummary = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  publishedAt: string;
+  tags: string[];
+  mainImage: SanityImage;
+  readTime: string;
+};
+
+export default async function LatestPosts() {
+  const latestPosts: PostSummary[] = await client.fetch(
+    latestPostsQuery,
+    {},
+    { next: { tags: ['post'], revalidate: 3600 } }
+  );
 
   return (
     <section id='blog' className='py-32 bg-background border-t border-border'>
@@ -32,7 +50,7 @@ export default function LatestPosts() {
                 {/* Thumbnail */}
                 <div className='relative aspect-video w-full overflow-hidden bg-muted'>
                   <Image
-                    src={post.thumbnail}
+                    src={urlFor(post.mainImage).width(640).height(360).url()}
                     alt={post.title}
                     fill
                     className='object-cover transition-transform duration-500 group-hover:scale-105'
@@ -45,7 +63,7 @@ export default function LatestPosts() {
                   {/* Meta info */}
                   <div className='flex items-center gap-3 text-xs text-muted-foreground mb-3'>
                     <time className='font-medium'>
-                      {new Date(post.date).toLocaleDateString('en-US', {
+                      {new Date(post.publishedAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric',

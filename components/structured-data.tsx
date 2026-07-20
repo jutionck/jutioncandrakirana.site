@@ -1,86 +1,105 @@
-export default function StructuredData() {
+import { client } from '@/sanity/lib/client';
+import {
+  profileQuery,
+  siteSettingsQuery,
+  skillNamesQuery,
+} from '@/sanity/lib/queries';
+
+type Profile = {
+  fullName: string;
+  alternateNames: string[];
+  jobTitle: string;
+  description: string;
+  email: string;
+  socialLinks: { platform: string; url: string }[];
+  employers: { name: string; country: string }[];
+  alumniOf: { name: string; city: string; country: string };
+  nationality: string;
+  knownLanguages: string[];
+};
+
+type SiteSettings = {
+  title: string;
+  siteUrl: string;
+};
+
+export default async function StructuredData() {
+  const [profile, siteSettings, skills] = await Promise.all([
+    client.fetch<Profile | null>(
+      profileQuery,
+      {},
+      { next: { tags: ['profile'], revalidate: 3600 } }
+    ),
+    client.fetch<SiteSettings | null>(
+      siteSettingsQuery,
+      {},
+      { next: { tags: ['siteSettings'], revalidate: 3600 } }
+    ),
+    client.fetch<string[]>(
+      skillNamesQuery,
+      {},
+      { next: { tags: ['skillCategory'], revalidate: 3600 } }
+    ),
+  ]);
+
+  if (!profile || !siteSettings) return null;
+
+  const siteUrl = siteSettings.siteUrl;
+  const sameAs = profile.socialLinks
+    .filter((s) => s.platform === 'github' || s.platform === 'linkedin')
+    .map((s) => s.url);
+
   const personSchema = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    '@id': 'https://jutioncandrakirana.site/#person',
-    name: 'Jution Candra Kirana',
-    alternateName: ['JCK', 'Jution C Kirana', 'jutionck'],
-    url: 'https://jutioncandrakirana.site',
-    image: 'https://jutioncandrakirana.site/favicon.ico',
-    sameAs: [
-      'https://github.com/jutionck',
-      'https://linkedin.com/in/jutionck',
-    ],
-    jobTitle: 'Senior Tech Educator & Full-Stack Developer',
-    worksFor: [
-      {
-        '@type': 'Organization',
-        name: 'Enigma Camp',
-        address: {
-          '@type': 'PostalAddress',
-          addressCountry: 'ID',
-        },
-      },
-      {
-        '@type': 'Organization',
-        name: 'Sobat Psikotes',
-        address: {
-          '@type': 'PostalAddress',
-          addressCountry: 'ID',
-        },
-      },
-    ],
-    alumniOf: {
-      '@type': 'EducationalOrganization',
-      name: 'Institut Informatika dan Bisnis Darmajaya',
+    '@id': `${siteUrl}/#person`,
+    name: profile.fullName,
+    alternateName: profile.alternateNames,
+    url: siteUrl,
+    image: `${siteUrl}/favicon.ico`,
+    sameAs,
+    jobTitle: profile.jobTitle,
+    worksFor: profile.employers.map((employer) => ({
+      '@type': 'Organization',
+      name: employer.name,
       address: {
         '@type': 'PostalAddress',
-        addressLocality: 'Lampung',
-        addressCountry: 'ID',
+        addressCountry: employer.country,
+      },
+    })),
+    alumniOf: {
+      '@type': 'EducationalOrganization',
+      name: profile.alumniOf.name,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: profile.alumniOf.city,
+        addressCountry: profile.alumniOf.country,
       },
     },
     nationality: {
       '@type': 'Country',
-      name: 'Indonesia',
+      name: profile.nationality,
     },
-    knowsAbout: [
-      'Full-Stack Development',
-      'Golang',
-      'Java Spring Boot',
-      'Node.js',
-      'React',
-      'Next.js',
-      'Kubernetes',
-      'Docker',
-      'Cloud Computing',
-      'Tech Education',
-      'Software Architecture',
-      'Artificial Intelligence',
-      'Machine Learning',
-      'PostgreSQL',
-      'MongoDB',
-    ],
-    knowsLanguage: ['English', 'Indonesian'],
-    description:
-      'Jution Candra Kirana - Experienced full-stack developer and tech educator from Indonesia with 7+ years specializing in Golang, Java Spring Boot, Node.js, React, and cloud technologies. Training 500+ developers and leading digital transformation.',
-    email: 'jutionck@gmail.com',
+    knowsAbout: skills,
+    knowsLanguage: profile.knownLanguages,
+    description: profile.description,
+    email: profile.email,
   };
 
   const websiteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    '@id': 'https://jutioncandrakirana.site/#website',
-    url: 'https://jutioncandrakirana.site',
-    name: 'Jution Candra Kirana - Portfolio',
-    description:
-      'Portfolio website of Jution Candra Kirana, a full-stack developer and tech educator from Indonesia',
+    '@id': `${siteUrl}/#website`,
+    url: siteUrl,
+    name: `${profile.fullName} - Portfolio`,
+    description: profile.description,
     author: {
-      '@id': 'https://jutioncandrakirana.site/#person',
+      '@id': `${siteUrl}/#person`,
     },
     inLanguage: 'en-US',
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://jutioncandrakirana.site/?s={search_term_string}',
+      target: `${siteUrl}/?s={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
   };
@@ -88,11 +107,11 @@ export default function StructuredData() {
   return (
     <>
       <script
-        type="application/ld+json"
+        type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
       />
       <script
-        type="application/ld+json"
+        type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
     </>

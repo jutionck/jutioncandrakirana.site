@@ -7,6 +7,11 @@ import ScrollToTop from '@/components/scroll-to-top';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 
+import { client } from '@/sanity/lib/client';
+import { urlFor } from '@/sanity/lib/image';
+import { profileQuery, siteSettingsQuery } from '@/sanity/lib/queries';
+import type { Image as SanityImage } from 'sanity';
+
 const geist = Geist({
   subsets: ['latin'],
   display: 'swap',
@@ -19,93 +24,107 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://jutioncandrakirana.site'),
-  title: 'Jution Candra Kirana - Tech Edu & Fullstack Developer',
-  description:
-    'Jution Candra Kirana - Experienced full-stack developer and tech educator from Indonesia with 7+ years specializing in Golang, Java Spring Boot, Node.js, React, Next.js, and cloud technologies. Training 500+ developers and leading digital transformation.',
-  keywords: [
-    'Jution Candra Kirana',
-    'Full-Stack Developer Indonesia',
-    'Tech Educator Indonesia',
-    'Golang Developer',
-    'Java Spring Boot Developer',
-    'React Developer',
-    'Next.js Developer',
-    'Node.js Developer',
-    'Kubernetes Expert',
-    'Cloud Native',
-    'Tech Trainer',
-    'Software Engineer Indonesia',
-    'AI Developer Indonesia',
-    'Senior Developer Indonesia',
-    'Enigma Camp Trainer',
-    'Sobat Psikotes CEO',
-  ],
-  authors: [
-    { name: 'Jution Candra Kirana', url: 'https://jutioncandrakirana.site' },
-  ],
-  creator: 'Jution Candra Kirana',
-  publisher: 'Jution Candra Kirana',
-  alternates: {
-    canonical: 'https://jutioncandrakirana.site',
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    alternateLocale: 'id_ID',
-    url: 'https://jutioncandrakirana.site',
-    title: 'Jution Candra Kirana - Tech Edu & Fullstack Developer',
-    description:
-      'Jution Candra Kirana - Experienced full-stack developer and tech educator from Indonesia with 7+ years specializing in Golang, Java Spring Boot, Node.js, React, and cloud technologies. Training 500+ developers.',
-    siteName: 'Jution Candra Kirana Portfolio',
-    images: [
-      {
-        url: '/1.png',
-        width: 512,
-        height: 512,
-        alt: 'Jution Candra Kirana Logo',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Jution Candra Kirana - Tech Edu & Fullstack Developer',
-    description:
-      'Jution Candra Kirana - Experienced full-stack developer and tech educator from Indonesia with 7+ years specializing in Golang, Java Spring Boot, Node.js, React, and cloud technologies.',
-    creator: '@jutioncandrakirana',
-    images: ['/1.png'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+type SiteSettings = {
+  title: string;
+  siteName: string;
+  keywords?: string[];
+  siteUrl: string;
+  ogImage?: SanityImage;
+  twitterHandle?: string;
+  googleSiteVerification?: string;
+};
+
+type ProfileMeta = {
+  fullName: string;
+  description: string;
+};
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [siteSettings, profile] = await Promise.all([
+    client.fetch<SiteSettings | null>(
+      siteSettingsQuery,
+      {},
+      { next: { tags: ['siteSettings'], revalidate: 3600 } }
+    ),
+    client.fetch<ProfileMeta | null>(
+      profileQuery,
+      {},
+      { next: { tags: ['profile'], revalidate: 3600 } }
+    ),
+  ]);
+
+  const siteUrl = siteSettings?.siteUrl || 'https://jutioncandrakirana.site';
+  const title =
+    siteSettings?.title ||
+    'Jution Candra Kirana - Tech Edu & Fullstack Developer';
+  const description =
+    profile?.description ||
+    'Jution Candra Kirana - Experienced full-stack developer and tech educator from Indonesia.';
+  const ogImageUrl = siteSettings?.ogImage
+    ? urlFor(siteSettings.ogImage).width(1200).height(630).url()
+    : undefined;
+
+  return {
+    metadataBase: new URL(siteUrl),
+    title,
+    description,
+    keywords: siteSettings?.keywords,
+    authors: [{ name: profile?.fullName || 'Jution Candra Kirana', url: siteUrl }],
+    creator: profile?.fullName || 'Jution Candra Kirana',
+    publisher: profile?.fullName || 'Jution Candra Kirana',
+    alternates: {
+      canonical: siteUrl,
+    },
+    openGraph: {
+      type: 'website',
+      locale: 'en_US',
+      alternateLocale: 'id_ID',
+      url: siteUrl,
+      title,
+      description,
+      siteName: siteSettings?.siteName || 'Jution Candra Kirana Portfolio',
+      images: ogImageUrl
+        ? [{ url: ogImageUrl, width: 1200, height: 630, alt: title }]
+        : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      creator: siteSettings?.twitterHandle,
+      images: ogImageUrl ? [ogImageUrl] : undefined,
+    },
+    robots: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  verification: {
-    google: 'your-google-verification-code',
-  },
-  icons: {
-    icon: [
-      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
-    other: [
-      {
-        rel: 'icon',
-        url: '/favicon.ico',
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
       },
-    ],
-  },
-};
+    },
+    verification: siteSettings?.googleSiteVerification
+      ? { google: siteSettings.googleSiteVerification }
+      : undefined,
+    icons: {
+      icon: [
+        { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+        { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
+      ],
+      apple: [
+        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      ],
+      other: [
+        {
+          rel: 'icon',
+          url: '/favicon.ico',
+        },
+      ],
+    },
+  };
+}
 
 import StructuredData from '@/components/structured-data';
 import SkipLink from '@/components/skip-link';

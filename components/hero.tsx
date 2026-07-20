@@ -6,9 +6,61 @@ import {
   Mail,
   Terminal,
   Server,
+  type LucideIcon,
 } from 'lucide-react';
 
-export default function Hero() {
+import { client } from '@/sanity/lib/client';
+import { homepageQuery, profileQuery } from '@/sanity/lib/queries';
+
+const SOCIAL_ICON_MAP: Record<string, LucideIcon> = {
+  github: Github,
+  linkedin: Linkedin,
+  email: Mail,
+};
+
+const BADGE_ICONS: { icon: LucideIcon; iconClass: string; boxClass: string }[] = [
+  { icon: Server, iconClass: 'text-primary', boxClass: 'bg-primary/10' },
+  { icon: Terminal, iconClass: 'text-green-500', boxClass: 'bg-green-500/10' },
+];
+
+type Profile = {
+  fullName: string;
+  jobTitle: string;
+  bioSegments: { text: string; bold: boolean }[];
+  heroStack: string[];
+  heroEducationLabel: string;
+  experienceLabel: string;
+  location: string;
+  socialLinks: { platform: string; url: string }[];
+};
+
+type HomepageHero = {
+  heroStatusBadgeText?: string;
+  heroHeadlineLine1?: string;
+  heroHeadlineLine2?: string;
+  heroPrimaryCtaLabel?: string;
+  heroPrimaryCtaHref?: string;
+  heroFloatingBadges?: { label: string; value: string }[];
+};
+
+export default async function Hero() {
+  const [profile, homepage] = await Promise.all([
+    client.fetch<Profile | null>(
+      profileQuery,
+      {},
+      { next: { tags: ['profile'], revalidate: 3600 } }
+    ),
+    client.fetch<HomepageHero | null>(
+      homepageQuery,
+      {},
+      { next: { tags: ['homepage'], revalidate: 3600 } }
+    ),
+  ]);
+
+  const bioSegments = profile?.bioSegments ?? [];
+  const socialLinks = profile?.socialLinks ?? [];
+  const floatingBadges = homepage?.heroFloatingBadges ?? [];
+
   return (
     <section
       id='home'
@@ -27,48 +79,49 @@ export default function Hero() {
                 <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75'></span>
                 <span className='relative inline-flex rounded-full h-2 w-2 bg-primary'></span>
               </span>
-              SYSTEM STATUS: ONLINE
+              {homepage?.heroStatusBadgeText || 'SYSTEM STATUS: ONLINE'}
             </div>
 
             <h1 className='text-5xl md:text-7xl font-bold text-foreground mb-6 tracking-tight leading-[1.1]'>
-              Jution Candra <br />
-              <span className='text-muted-foreground'>Kirana.</span>
+              {homepage?.heroHeadlineLine1 || 'Jution Candra'} <br />
+              <span className='text-muted-foreground'>
+                {homepage?.heroHeadlineLine2 || 'Kirana.'}
+              </span>
             </h1>
 
             <div className='h-px w-20 bg-border mb-8'></div>
 
             <p className='text-lg md:text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed font-light'>
-              Senior Trainer at{' '}
-              <strong className='text-foreground'>Enigma Camp</strong> with 7+
-              years of experience in backend, frontend, and cloud-native
-              development. Founder of{' '}
-              <strong className='text-foreground'>MIPDEVP</strong> and{' '}
-              <strong className='text-foreground'>Sobat Psikotes</strong>,
-              delivering scalable apps and digital solutions for businesses and
-              organizations. Passionate about building systems and developing
-              future tech talent.
+              {bioSegments.map((segment, i) =>
+                segment.bold ? (
+                  <strong key={i} className='text-foreground'>
+                    {segment.text}
+                  </strong>
+                ) : (
+                  <span key={i}>{segment.text}</span>
+                )
+              )}
             </p>
 
             <div className='flex flex-wrap gap-4'>
               <Link
-                href='#portfolio'
+                href={homepage?.heroPrimaryCtaHref || '#portfolio'}
                 className='px-6 py-3 bg-foreground text-background font-semibold text-sm rounded hover:bg-foreground/90 transition-all flex items-center gap-2'
               >
-                View Projects <ArrowRight className='w-4 h-4' />
+                {homepage?.heroPrimaryCtaLabel || 'View Projects'}{' '}
+                <ArrowRight className='w-4 h-4' />
               </Link>
               <div className='flex items-center gap-2 border-l border-border pl-4 ml-2'>
-                <SocialLink
-                  href='https://github.com/jutionck'
-                  icon={<Github className='w-5 h-5' />}
-                />
-                <SocialLink
-                  href='https://linkedin.com/in/jutionck'
-                  icon={<Linkedin className='w-5 h-5' />}
-                />
-                <SocialLink
-                  href='mailto:jutionck@gmail.com'
-                  icon={<Mail className='w-5 h-5' />}
-                />
+                {socialLinks.map((social) => {
+                  const Icon = SOCIAL_ICON_MAP[social.platform] ?? Mail;
+                  return (
+                    <SocialLink
+                      key={social.platform}
+                      href={social.url}
+                      icon={<Icon className='w-5 h-5' />}
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -100,32 +153,41 @@ export default function Hero() {
                   <div>
                     <span className='text-muted-foreground'>name:</span>{' '}
                     <span className='text-green-500'>
-                      &quot;Jution Candra Kirana&quot;
+                      &quot;{profile?.fullName || 'Jution Candra Kirana'}&quot;
                     </span>
                     ,
                   </div>
                   <div>
                     <span className='text-muted-foreground'>role:</span>{' '}
                     <span className='text-green-500'>
-                      &quot;Tech Edu & Software Engineer&quot;
+                      &quot;{profile?.jobTitle || 'Tech Edu & Software Engineer'}&quot;
                     </span>
                     ,
                   </div>
                   <div>
                     <span className='text-muted-foreground'>location:</span>{' '}
-                    <span className='text-green-500'>&quot;Jakarta&quot;</span>,
+                    <span className='text-green-500'>
+                      &quot;{profile?.location || 'Jakarta'}&quot;
+                    </span>
+                    ,
                   </div>
                   <div>
                     <span className='text-muted-foreground'>experience:</span>{' '}
-                    <span className='text-orange-400'>7+ Years</span>,
+                    <span className='text-orange-400'>
+                      {profile?.experienceLabel || '7+ Years'}
+                    </span>
+                    ,
                   </div>
                   <div>
                     <span className='text-muted-foreground'>stack:</span> [
                   </div>
                   <div className='pl-4 text-green-500'>
-                    &quot;Golang&quot;, &quot;Java&quot;,&quot;PHP&quot;,
-                    &quot;JavaScript&quot;, &quot;Next.js&quot;,
-                    &quot;Docker&quot;
+                    {(profile?.heroStack || []).map((tech, i) => (
+                      <span key={tech}>
+                        &quot;{tech}&quot;
+                        {i < (profile?.heroStack.length ?? 0) - 1 ? ', ' : ''}
+                      </span>
+                    ))}
                   </div>
                   <div>],</div>
                   <div>
@@ -135,7 +197,10 @@ export default function Hero() {
                   <div className='pl-4'>
                     <span className='text-muted-foreground'>master:</span>{' '}
                     <span className='text-green-500'>
-                      &quot;Universitas Budi Luhur (Ongoing)&quot;
+                      &quot;
+                      {profile?.heroEducationLabel ||
+                        'Universitas Budi Luhur (Ongoing)'}
+                      &quot;
                     </span>
                   </div>
                   <div>{`}`}</div>
@@ -145,28 +210,50 @@ export default function Hero() {
             </div>
 
             {/* Floating Badges */}
-            <div
-              className='absolute -right-8 -top-8 p-4 bg-card border border-border rounded-lg shadow-xl flex items-center gap-3 animate-bounce'
-              style={{ animationDuration: '3s' }}
-            >
-              <div className='p-2 bg-primary/10 rounded'>
-                <Server className='w-5 h-5 text-primary' />
+            {floatingBadges[0] && (
+              <div
+                className='absolute -right-8 -top-8 p-4 bg-card border border-border rounded-lg shadow-xl flex items-center gap-3 animate-bounce'
+                style={{ animationDuration: '3s' }}
+              >
+                <div className={`p-2 rounded ${BADGE_ICONS[0].boxClass}`}>
+                  {(() => {
+                    const Icon = BADGE_ICONS[0].icon;
+                    return (
+                      <Icon className={`w-5 h-5 ${BADGE_ICONS[0].iconClass}`} />
+                    );
+                  })()}
+                </div>
+                <div className='text-xs'>
+                  <div className='text-muted-foreground'>
+                    {floatingBadges[0].label}
+                  </div>
+                  <div className='text-foreground font-mono'>
+                    {floatingBadges[0].value}
+                  </div>
+                </div>
               </div>
-              <div className='text-xs'>
-                <div className='text-muted-foreground'>Full Stack</div>
-                <div className='text-foreground font-mono'>Dev</div>
-              </div>
-            </div>
+            )}
 
-            <div className='absolute -left-8 bottom-10 p-4 bg-card border border-border rounded-lg shadow-xl flex items-center gap-3'>
-              <div className='p-2 bg-green-500/10 rounded'>
-                <Terminal className='w-5 h-5 text-green-500' />
+            {floatingBadges[1] && (
+              <div className='absolute -left-8 bottom-10 p-4 bg-card border border-border rounded-lg shadow-xl flex items-center gap-3'>
+                <div className={`p-2 rounded ${BADGE_ICONS[1].boxClass}`}>
+                  {(() => {
+                    const Icon = BADGE_ICONS[1].icon;
+                    return (
+                      <Icon className={`w-5 h-5 ${BADGE_ICONS[1].iconClass}`} />
+                    );
+                  })()}
+                </div>
+                <div className='text-xs'>
+                  <div className='text-muted-foreground'>
+                    {floatingBadges[1].label}
+                  </div>
+                  <div className='text-foreground font-mono'>
+                    {floatingBadges[1].value}
+                  </div>
+                </div>
               </div>
-              <div className='text-xs'>
-                <div className='text-muted-foreground'>Trainer</div>
-                <div className='text-foreground font-mono'>500+ Students</div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

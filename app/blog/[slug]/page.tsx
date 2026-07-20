@@ -1,6 +1,4 @@
-'use client';
-
-import { use, type ComponentPropsWithoutRef } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import Image from 'next/image';
@@ -11,15 +9,79 @@ import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github-dark.css';
-import { posts } from '@/lib/data';
+import type { Metadata } from 'next';
+import type { Image as SanityImage } from 'sanity';
 
-export default function BlogPostPage({
+import { client } from '@/sanity/lib/client';
+import { urlFor } from '@/sanity/lib/image';
+import { allPostSlugsQuery, postBySlugQuery } from '@/sanity/lib/queries';
+
+type Post = {
+  title: string;
+  slug: string;
+  excerpt: string;
+  publishedAt: string;
+  tags: string[];
+  mainImage: SanityImage;
+  readTime: string;
+  body: string;
+  seoTitle?: string;
+  seoDescription?: string;
+};
+
+async function getPost(slug: string): Promise<Post | null> {
+  return client.fetch(
+    postBySlugQuery,
+    { slug },
+    { next: { tags: ['post', `post:${slug}`], revalidate: 3600 } }
+  );
+}
+
+export async function generateStaticParams() {
+  const slugs: { slug: string }[] = await client.fetch(
+    allPostSlugsQuery,
+    {},
+    { next: { tags: ['post'], revalidate: 3600 } }
+  );
+  return slugs.map(({ slug }) => ({ slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPost(slug);
+
+  if (!post) {
+    return { title: 'Post Not Found' };
+  }
+
+  const title = post.seoTitle || post.title;
+  const description = post.seoDescription || post.excerpt;
+  const imageUrl = post.mainImage
+    ? urlFor(post.mainImage).width(1200).height(630).url()
+    : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: imageUrl ? [imageUrl] : undefined,
+    },
+  };
+}
+
+export default async function BlogPostPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = use(params);
-  const post = posts.find((p) => p.slug === slug);
+  const { slug } = await params;
+  const post = await getPost(slug);
 
   if (!post) {
     return (
@@ -44,6 +106,8 @@ export default function BlogPostPage({
       </main>
     );
   }
+
+  const thumbnailUrl = urlFor(post.mainImage).width(1600).height(900).url();
 
   return (
     <main id='main-content' className='min-h-screen bg-background'>
@@ -70,7 +134,7 @@ export default function BlogPostPage({
             <div className='flex items-center gap-1.5 bg-muted/50 px-3 py-1 rounded-full'>
               <Calendar className='w-4 h-4' />
               <time>
-                {new Date(post.date).toLocaleDateString('en-US', {
+                {new Date(post.publishedAt).toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric',
@@ -104,7 +168,7 @@ export default function BlogPostPage({
           {/* Thumbnail */}
           <div className='relative aspect-video w-full overflow-hidden rounded-2xl border border-border/50 shadow-2xl shadow-primary/5 mb-16 group'>
             <Image
-              src={post.thumbnail}
+              src={thumbnailUrl}
               alt={post.title}
               fill
               className='object-cover transition-transform duration-700 group-hover:scale-105'
@@ -183,7 +247,7 @@ export default function BlogPostPage({
               ),
             }}
           >
-            {post.content || ''}
+            {post.body || ''}
           </ReactMarkdown>
         </div>
 

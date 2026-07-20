@@ -4,7 +4,11 @@ import Footer from '@/components/footer';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BookOpen, Clock, Calendar, Tag, ArrowRight } from 'lucide-react';
-import { posts } from '@/lib/data';
+
+import { client } from '@/sanity/lib/client';
+import { urlFor } from '@/sanity/lib/image';
+import { allPostsQuery, homepageQuery } from '@/sanity/lib/queries';
+import type { Image as SanityImage } from 'sanity';
 
 export const metadata: Metadata = {
   description:
@@ -14,7 +18,36 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogPage() {
+type PostSummary = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  publishedAt: string;
+  tags: string[];
+  mainImage: SanityImage;
+  readTime: string;
+};
+
+type HomepageCopy = {
+  blogIndexBadgeText?: string;
+  blogIndexTitle?: string;
+  blogIndexDescription?: string;
+};
+
+export default async function BlogPage() {
+  const [posts, homepage] = await Promise.all([
+    client.fetch<PostSummary[]>(
+      allPostsQuery,
+      {},
+      { next: { tags: ['post'], revalidate: 3600 } }
+    ),
+    client.fetch<HomepageCopy | null>(
+      homepageQuery,
+      {},
+      { next: { tags: ['homepage'], revalidate: 3600 } }
+    ),
+  ]);
+
   return (
     <main id='main-content' className='min-h-screen bg-background'>
       <Header />
@@ -31,25 +64,19 @@ export default function BlogPage() {
             <div className='inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20'>
               <BookOpen className='w-4 h-4 text-primary' />
               <span className='text-sm font-semibold text-primary'>
-                Technical Articles
+                {homepage?.blogIndexBadgeText || 'Technical Articles'}
               </span>
             </div>
 
             {/* Title */}
-            <h1 className='text-5xl lg:text-6xl font-bold tracking-tight'>
-              My{' '}
-              <span className='bg-linear-to-r from-primary via-accent to-secondary bg-clip-text text-transparent'>
-                Blog
-              </span>
+            <h1 className='text-5xl lg:text-6xl font-bold tracking-tight bg-linear-to-r from-primary via-accent to-secondary bg-clip-text text-transparent'>
+              {homepage?.blogIndexTitle || 'My Blog'}
             </h1>
 
             {/* Description */}
             <p className='text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed'>
-              Technical articles about{' '}
-              <span className='text-primary font-semibold'>
-                modern web development, architecture, and best practices
-              </span>
-              . Sharing knowledge and insights from real-world experience.
+              {homepage?.blogIndexDescription ||
+                'Technical articles about modern web development, architecture, and best practices. Sharing knowledge and insights from real-world experience.'}
             </p>
           </div>
         </div>
@@ -58,7 +85,7 @@ export default function BlogPage() {
       {/* Blog Posts Section */}
       <section className='max-w-5xl mx-auto px-6 pb-24'>
         <div className='grid gap-12'>
-          {posts.map((post, index) => (
+          {posts.map((post) => (
             <article
               key={post.slug}
               className='group relative flex flex-col md:flex-row gap-8 p-6 rounded-3xl border border-border bg-card/30 hover:bg-card/50 hover:border-primary/30 transition-all duration-500'
@@ -67,7 +94,7 @@ export default function BlogPage() {
               <div className='md:w-80 shrink-0'>
                 <div className='relative aspect-video w-full overflow-hidden rounded-2xl bg-muted border border-border/50 shadow-sm group-hover:shadow-md transition-all duration-500'>
                   <Image
-                    src={post.thumbnail}
+                    src={urlFor(post.mainImage).width(640).height(360).url()}
                     alt={post.title}
                     fill
                     className='object-cover transition-transform duration-700 group-hover:scale-105'
@@ -84,7 +111,7 @@ export default function BlogPage() {
                   <div className='flex items-center gap-1.5 bg-muted/50 px-2.5 py-1 rounded-full'>
                     <Calendar className='w-3.5 h-3.5' />
                     <time>
-                      {new Date(post.date).toLocaleDateString('en-US', {
+                      {new Date(post.publishedAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric',
