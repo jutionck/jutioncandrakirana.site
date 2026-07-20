@@ -69,7 +69,7 @@ export default async function BlogPage() {
             </div>
 
             {/* Title */}
-            <h1 className='text-5xl lg:text-6xl font-bold tracking-tight bg-linear-to-r from-primary via-accent to-secondary bg-clip-text text-transparent'>
+            <h1 className='text-5xl lg:text-6xl font-bold tracking-tight text-foreground'>
               {homepage?.blogIndexTitle || 'My Blog'}
             </h1>
 

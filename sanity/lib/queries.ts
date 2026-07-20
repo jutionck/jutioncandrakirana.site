@@ -50,6 +50,18 @@ export const sitemapPostsQuery = groq`
   *[_type == "post"]{ "slug": slug.current, publishedAt }
 `;
 
+export const relatedPostsQuery = groq`
+  *[_type == "post" && slug.current != $slug] | order(publishedAt desc)[0...3] {
+    _id,
+    title,
+    "slug": slug.current,
+    excerpt,
+    publishedAt,
+    mainImage,
+    readTime
+  }
+`;
+
 export const statsQuery = groq`
   *[_type == "stat"] | order(order asc) { value, label }
 `;

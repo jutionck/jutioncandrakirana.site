@@ -153,11 +153,12 @@ export default function RootLayout({
       </head>
       <body
         className={`${geist.variable} ${geistMono.variable} font-sans antialiased`}
+        suppressHydrationWarning
       >
         <SkipLink />
         <ThemeProvider
           attribute='class'
-          defaultTheme='light'
+          defaultTheme='system'
           enableSystem
           storageKey='jck-theme'
         >
