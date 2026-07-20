@@ -1,6 +1,6 @@
 'use client';
 
-import { use } from 'react';
+import { use, type ComponentPropsWithoutRef } from 'react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import Image from 'next/image';
@@ -150,7 +150,11 @@ export default function BlogPostPage({
               li: ({ children }) => (
                 <li className='leading-relaxed pl-1'>{children}</li>
               ),
-              code: ({ className, children, ...props }: any) => {
+              code: ({
+                className,
+                children,
+                ...props
+              }: ComponentPropsWithoutRef<'code'>) => {
                 const match = /language-(\w+)/.exec(className || '');
                 return match ? (
                   <div className='relative group'>

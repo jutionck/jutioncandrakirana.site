@@ -1,10 +1,10 @@
 # Jution Candra Kirana - Personal Website & Portfolio
 
-A modern, responsive personal website and blog built with Next.js 15 and Tailwind CSS v4. This project serves as a professional portfolio and content platform for Jution Candra Kirana, a Full-stack Developer and Tech Educator.
+A modern, responsive personal website and blog built with Next.js 16 and Tailwind CSS v4. This project serves as a professional portfolio and content platform for Jution Candra Kirana, a Full-stack Developer and Tech Educator.
 
 ## 🚀 Tech Stack
 
-- **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
 - **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
 - **Icons:** [Lucide React](https://lucide.dev/)
@@ -81,6 +81,8 @@ pnpm start
 ├── public/             # Static assets (images, icons)
 └── styles/             # Additional style files
 ```
+
+> **Note:** The `backend/` directory contains a *planned* microservices scaffold (Docker Compose, Nginx, per-service Dockerfiles). It is not yet implemented — the services have no application source code and are not wired up to the frontend above. The live site is fully static/data-driven and does not depend on `backend/`.
 
 ## 👤 Author
 
