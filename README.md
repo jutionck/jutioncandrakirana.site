@@ -89,8 +89,6 @@ pnpm start
 └── styles/               # Additional style files
 ```
 
-> **Note:** The `backend/` directory contains a *planned* microservices scaffold (Docker Compose, Nginx, per-service Dockerfiles). It is not implemented — the services have no application source code and are not wired up to the frontend. It is unrelated to the Sanity CMS integration above.
-
 ## ✏️ Content Management (Sanity)
 
 All site content — blog posts, hero copy, stats, skills, portfolio, experience, education, certifications, profile/bio, and SEO metadata — lives in Sanity, not in the codebase. Editing content does **not** require a code change or redeploy.
