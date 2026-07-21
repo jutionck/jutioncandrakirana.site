@@ -1,12 +1,22 @@
 import { groq } from 'next-sanity';
 
 export const allPostsQuery = groq`
-  *[_type == "post"] | order(publishedAt desc) {
+  *[_type == "post"
+    && ($category == "" || category == $category)
+    && (
+      $search == "" ||
+      title match $search + "*" ||
+      excerpt match $search + "*" ||
+      body match $search + "*" ||
+      count(tags[@ match ($search + "*")]) > 0
+    )
+  ] | order(publishedAt desc) {
     _id,
     title,
     "slug": slug.current,
     excerpt,
     publishedAt,
+    category,
     tags,
     mainImage,
     readTime

@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { CATEGORIES } from '../../lib/categories';
 
 export const postType = defineType({
   name: 'post',
@@ -25,6 +26,14 @@ export const postType = defineType({
     defineField({
       name: 'publishedAt',
       type: 'datetime',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'category',
+      type: 'string',
+      options: {
+        list: CATEGORIES.map((c) => ({ title: c.label, value: c.value })),
+      },
       validation: (rule) => rule.required(),
     }),
     defineField({
